@@ -22,6 +22,10 @@ public:
 		destroy(root);
 	}
 
+	void clearTree() {
+		destroy(root);
+	}
+
 	void insertNew(string d) {
 		insert(d, root);
 	}
