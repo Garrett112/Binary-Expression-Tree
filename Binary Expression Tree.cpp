@@ -6,12 +6,14 @@ using namespace std;
 int main()
 {
     binaryExpressionTree tree;
-    ifstream file("RpnData.txt");
+    ifstream file("Text.txt");
     string line;
     while (getline(file, line)) {
+        cout << line << endl;
         tree.buildExpressionTree(line);
-        tree.evaluateExpressionTree();
+        cout << tree.evaluateExpressionTree() << endl;
         tree.clearTree();
+        cout << endl;
     }
 }
 

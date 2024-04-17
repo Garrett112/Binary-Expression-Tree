@@ -3,6 +3,7 @@
 #include <stack>
 #include <cstring>
 #include <cctype>
+#include <vector>
 
 #include "binaryTreeType.h"
 
@@ -11,19 +12,25 @@ public:
 	
 	void buildExpressionTree(string s) {
 		stack<Node*> stack;
-		char* ex = new char[s.length() + 1];
+		int l = s.length();
+		char* ex = new char[l+1];
 		strcpy(ex, s.c_str());
-		for (int i = 0; i < s.length(); ++i) 
+		for (int i = 0; i < l; ++i) {
 			if (isdigit(ex[i])) {
+				string t(1, ex[i]);
+				while (isdigit(ex[i + 1]) && i < l+1) {
+					t.push_back(ex[i + 1]);
+					i++;
+				}
 				Node* newNode = new Node;
-				newNode->data = ex[i];
+				newNode->data = t;
 				newNode->left = nullptr;
 				newNode->right = nullptr;
 				stack.push(newNode);
 			}
-			else if (ex[i] == "+" || token == "-" || token == "*" || token == "/") {
+			else if (ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/') {
 				Node* newNode = new Node;
-				newNode->data = token;
+				newNode->data = ex[i];
 				if (!stack.empty()) {
 					newNode->left = stack.top();
 					stack.pop();
@@ -43,11 +50,13 @@ public:
 				}
 
 			}
+			else if (ex[i] == ' ') {
+
+			}
 			else {
 				cout << "Error - Unsupported Token" << endl;
 				return;
 			}
-			token = strtok(nullptr, " ");
 		}
 		if (!stack.empty()) {
 			root = stack.top();
@@ -57,7 +66,7 @@ public:
 				root = nullptr;
 			}
 		}
-		delete ex;
+		delete[] ex;
 	}
 
 	double evaluateExpressionTree() {
@@ -67,34 +76,37 @@ public:
 private:
 	
 	double calculate(Node* n) {
-		double tempL = 0;
-		double tempR = 0;
-		double answer = 0;
 		if (n->left->data == "+" || n->left->data == "-" || n->left->data == "*" || n->left->data == "/") {
-			tempL = calculate(n->left);
+			if (n->right->data == "+" || n->right->data == "-" || n->right->data == "*" || n->right->data == "/") {
+				return operate(n->data, calculate(n->left), calculate(n->right));
+			}
+			else {
+				return operate(n->data, calculate(n->left), stod(n->right->data));
+			}
 		}
 		else {
-			tempL = stod(n->left->data);
+			if (n->right->data == "+" || n->right->data == "-" || n->right->data == "*" || n->right->data == "/") {
+				return operate(n->data, stod(n->left->data), calculate(n->right));
+			}
+			else {
+				return operate(n->data, stod(n->left->data), stod(n->right->data));
+			}
 		}
-		if (n->right->data == "+" || n->right->data == "-" || n->right->data == "*" || n->right->data == "/") {
-			tempL = calculate(n->left);
+	}
+
+	double operate(string o, double l, double r) {
+		if (o == "+") {
+			return r + l;
 		}
-		else {
-			tempR = stod(n->left->data);
+		else if (o == "-") {
+			return r - l;
 		}
-		if (n->data == "+") {
-			answer = tempL + tempR;
+		else if (o == "*") {
+			return r * l;
 		}
-		else if (n->data == "-") {
-			answer = tempL - tempR;
+		else if (o == "/") {
+			return r / l;
 		}
-		else if (n->data == "*") {
-			answer = tempL * tempR;
-		}
-		else if (n->data == "/") {
-			answer = tempL / tempR;
-		}
-		return answer;
 	}
 };
 

@@ -23,7 +23,9 @@ public:
 	}
 
 	void clearTree() {
-		destroy(root);
+		destroy(root->left);
+		destroy(root->right);
+		root = nullptr;
 	}
 
 	void insertNew(string d) {
