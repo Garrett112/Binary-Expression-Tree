@@ -11,62 +11,62 @@ class binaryExpressionTree : public binaryTreeType {
 public:
 	
 	void buildExpressionTree(string s) {
-		stack<Node*> stack;
-		int l = s.length();
-		char* ex = new char[l+1];
-		strcpy(ex, s.c_str());
-		for (int i = 0; i < l; ++i) {
-			if (isdigit(ex[i])) {
-				string t(1, ex[i]);
-				while (isdigit(ex[i + 1]) && i < l+1) {
-					t.push_back(ex[i + 1]);
-					i++;
+		stack<Node*> stack;									//creates stack
+		int l = s.length();									//sets the integer l to the length of s
+		char* ex = new char[l+1];							//creates an array of character of length l
+		strcpy(ex, s.c_str());								//breaks string s into an array of character (ex)
+		for (int i = 0; i < l; ++i) {						//for the length of the array
+			if (isdigit(ex[i])) {							//if ex[i] is an integer
+				string t(1, ex[i]);							//convert the character to a string
+				while (isdigit(ex[i + 1]) && i < l+1) {		//while ex[i+1] is also an integer
+					t.push_back(ex[i + 1]);					//combine that character with the string (so 3 and 5 turn to 35)
+					i++;									//move to the next character in ex
 				}
-				Node* newNode = new Node;
-				newNode->data = t;
-				newNode->left = nullptr;
-				newNode->right = nullptr;
-				stack.push(newNode);
+				Node* newNode = new Node;					//create a new node
+				newNode->data = t;							//set the node's data to the value of the string
+				newNode->left = nullptr;					//set the left pointer to nullptr
+				newNode->right = nullptr;					//set the right pointer to nullptr
+				stack.push(newNode);						//push the new node onto the stack
 			}
-			else if (ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/') {
-				Node* newNode = new Node;
-				newNode->data = ex[i];
-				if (!stack.empty()) {
-					newNode->left = stack.top();
-					stack.pop();
-					if (!stack.empty()) {
-						newNode->right = stack.top();
-						stack.pop();
-						stack.push(newNode);
+			else if (ex[i] == '+' || ex[i] == '-' || ex[i] == '*' || ex[i] == '/') { //if the ex[i] is an operator
+				Node* newNode = new Node;					//create a new node
+				newNode->data = ex[i];						//set the node's data to the value of ex[i]
+				if (!stack.empty()) {						//if the stack is not empty
+					newNode->left = stack.top();			//set the left pointer to the top of the stack
+					stack.pop();							//pop the stack
+					if (!stack.empty()) {					//if the stack is not empty
+						newNode->right = stack.top();		//set the right pointer to the top of the stack
+						stack.pop();						//pop the stack
+						stack.push(newNode);				//push the new node onto the stack
 					}
-					else {
-						cout << "Error - Stack is Empty" << endl;
+					else {									//else
+						cout << "Error - Stack is Empty" << endl;	//give error message
 						return;
 					}
 				}
-				else {
-					cout << "Error - Stack is Empty" << endl;
-					return;
+				else {										//else
+					cout << "Error - Stack is Empty" << endl;		//give error message
+					return;	
 				}
 
 			}
-			else if (ex[i] == ' ') {
-
+			else if (ex[i] == ' ') {						//if ex[i] is a space
+															//do nothing
 			}
-			else {
-				cout << "Error - Unsupported Token" << endl;
+			else {											//else
+				cout << "Error - Unsupported Token" << endl;	//give error message
 				return;
 			}
 		}
-		if (!stack.empty()) {
-			root = stack.top();
-			stack.pop();
-			if (!stack.empty()) {
-				cout << "Error, Resetting Tree" << endl;
-				root = nullptr;
+		if (!stack.empty()) {								//if the stack is not empty
+			root = stack.top();								//set the root equal to the top of the stack
+			stack.pop();									//pop the stack
+			if (!stack.empty()) {							//if the stack is still not empty
+				cout << "Error, Resetting Tree" << endl;	//give error message
+				root = nullptr;								//set the root equal to nullptr
 			}
 		}
-		delete[] ex;
+		delete[] ex;										//delete the character array
 	}
 
 	double evaluateExpressionTree() {
